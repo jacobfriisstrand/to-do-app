@@ -1,0 +1,26 @@
+:root {
+  --transition-duration: 100ms ease-in-out;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+}
+
+.task-buttons > * {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  transition: var(--transition-duration);
+  padding: none;
+}
+
+.task-buttons > *:hover,
+#date-input:hover {
+  opacity: 0.5;
+  transition: var(--transition-duration);
+}
+
+.delete {
+  display: none;
+}
