@@ -56,30 +56,6 @@ taskInput.addEventListener("keydown", (e) => {
 
       console.log(toDoArray);
 
-      // Set the current date as the starting date for setting a due date
-      function setCurrentDate() {
-        // Define date input
-        const dateInput = document.querySelector("#date-input");
-        let currentFullDate = "";
-        let currentDate = new Date();
-        let currentDay = currentDate.getDate();
-        let currentMonth = currentDate.getMonth() + 1;
-        let currentYear = currentDate.getFullYear();
-
-        if (currentMonth < 10) {
-          currentMonth = "0" + currentMonth;
-        }
-
-        if (currentDay < 10) {
-          currentDay = "0" + currentDay;
-        }
-        currentFullDate = `${currentYear}-${currentMonth}-${currentDay}`; // Assign to currentFullDate
-
-        dateInput.setAttribute("min", currentFullDate);
-        dateInput.setAttribute("value", currentFullDate);
-      }
-      setCurrentDate();
-
       // Function that handles the loop is called
       displayToDoList();
     }
@@ -105,6 +81,7 @@ function appendObject(task) {
   let taskDescription = taskClone.querySelector("#task-description");
   let dueDateDescription = taskClone.querySelector("#due-date");
   const deleteButton = taskClone.querySelector("#delete-button");
+  const dateInputField = taskClone.querySelector("#date-input");
   const doneButton = taskClone.querySelector("#done-button");
   const importantButton = taskClone.querySelector("#important-button");
 
@@ -114,12 +91,32 @@ function appendObject(task) {
   // Appends the clone to the unordered list
   document.querySelector("ul").appendChild(taskClone);
 
+  // Define date input
+  let currentFullDate = "";
+  let currentDate = new Date();
+  let currentDay = currentDate.getDate();
+  let currentMonth = currentDate.getMonth() + 1;
+  let currentYear = currentDate.getFullYear();
+
+  if (currentMonth < 10) {
+    currentMonth = "0" + currentMonth;
+  }
+
+  if (currentDay < 10) {
+    currentDay = "0" + currentDay;
+  }
+  currentFullDate = `${currentYear}-${currentMonth}-${currentDay}`; // Assign to currentFullDate
+
+  dateInputField.setAttribute("min", currentFullDate);
+  dateInputField.setAttribute("value", currentFullDate);
+
+  // Set the current date as the starting date for setting a due date
+
   // Define dateInput
-  const dateInput = document.querySelector("#date-input");
-  dateInput.addEventListener("change", () => {
+  dateInputField.addEventListener("change", () => {
     const findID = toDoArray.findIndex((taskToBeFound) => task.id === taskToBeFound.id);
     console.log(findID);
-    task.dueDate = dateInput.value;
+    task.dueDate = dateInputField.value;
     if (task.dueDate === "") {
       dueDateDescription.textContent = "Date not set";
       // Hvis due date er defineret, skriv det ud i DOM'en
