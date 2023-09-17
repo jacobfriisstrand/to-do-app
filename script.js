@@ -135,15 +135,18 @@ function appendObject(task) {
     setItem();
   });
 
-  deleteButton.addEventListener("click", () => {
-    // console.log(task.id);
-    const findID = toDoArray.findIndex((taskToBeFound) => task.id === taskToBeFound.id);
-    console.log(findID);
-  });
-
   if (task.dueDate === "") {
     dueDateDescription.textContent = "";
   } else if (task.dueDate !== "") {
     dueDateDescription.textContent = `Due date has been assigned to ${task.dueDate}`;
+    dateInputField.value = task.dueDate;
   }
+
+  deleteButton.addEventListener("click", (e) => {
+    const findID = toDoArray.findIndex((taskToBeFound) => task.id === taskToBeFound.id);
+    console.log(findID);
+    toDoArray.splice(findID, 1);
+    displayToDoList();
+    setItem();
+  });
 }
