@@ -1,6 +1,7 @@
 // Define empty array to push objects into
 let toDoArray = [];
 
+function displayStoredItems() {}
 if (localStorage.getItem("toDoArray")) {
   toDoArray = JSON.parse(localStorage.getItem("toDoArray"));
   displayToDoList(); // Display the tasks from localStorage
@@ -10,62 +11,78 @@ if (localStorage.getItem("toDoArray")) {
 const taskInput = document.querySelector("#task-input");
 
 // Event listener that creates an object when enter key is pressed after entering a task in taskInput field
-taskInput.addEventListener("keypress", (e) => {
+taskInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     // Defines the inputValue as the value of the text input field
     const inputValue = taskInput.value;
 
-    // Clears the input value after the inputValue is stored as a variable
-    taskInput.value = "";
+    // Adding functionality to make input field shake if no content is applied
+    if (inputValue === "") {
+      taskInput.classList.add("invalid");
+      taskInput.setAttribute("placeholder", "Invalid input");
 
-    // Object for the array is being created
-    const task = {
-      description: inputValue,
-      // Generates a id for the object that will always be unique as it counts the number of objects in the array +1
+      // Changes the inputfield to normal after 2000ms
+      setTimeout(() => {
+        taskInput.classList.remove("invalid");
+        taskInput.setAttribute("placeholder", "New task...");
+      }, 2000);
+      return;
+      // If input field has content, execute the push of the object
+    } else {
+      taskInput.classList.remove("invalid");
+      // Clears the input value after the inputValue is stored as a variable
+      taskInput.value = "";
 
-      id: toDoArray.length + 1,
+      // Object for the array is being created
+      const task = {
+        description: inputValue,
+        // Generates a id for the object that will always be unique as it counts the number of objects in the array +1
 
-      // Due date is set empty, so that it can be enriched later
-      dueDate: "",
+        id: toDoArray.length + 1,
 
-      // Boolean values to define if the object is important or completed
-      complete: false,
-      important: false,
-    };
+        // Due date is set empty, so that it can be enriched later
+        dueDate: "",
 
-    // Object is pushed to the array
-    toDoArray.push(task);
+        // Boolean values to define if the object is important or completed
+        complete: false,
+        important: false,
+      };
 
-    localStorage.setItem("toDoArray", JSON.stringify(toDoArray));
+      // Object is pushed to the array
+      toDoArray.push(task);
 
-    console.log(toDoArray);
+      // Saves the content of the array in Local Storage
+      localStorage.setItem("toDoArray", JSON.stringify(toDoArray));
 
-    // Function that handles the loop is called
-    displayToDoList();
+      console.log(toDoArray);
 
-    // Set the current date as the starting date for setting a due date
-    function setCurrentDate() {
-      // Define date input
-      const dateInput = document.querySelector("#date-input");
-      let currentFullDate = "";
-      let currentDate = new Date();
-      let currentDay = currentDate.getDate();
-      let currentMonth = currentDate.getMonth() + 1;
-      let currentYear = currentDate.getFullYear();
+      // Set the current date as the starting date for setting a due date
+      function setCurrentDate() {
+        // Define date input
+        const dateInput = document.querySelector("#date-input");
+        let currentFullDate = "";
+        let currentDate = new Date();
+        let currentDay = currentDate.getDate();
+        let currentMonth = currentDate.getMonth() + 1;
+        let currentYear = currentDate.getFullYear();
 
-      if (currentMonth < 10) {
-        currentMonth = "0" + currentMonth;
+        if (currentMonth < 10) {
+          currentMonth = "0" + currentMonth;
+        }
+
+        if (currentDay < 10) {
+          currentDay = "0" + currentDay;
+        }
+        currentFullDate = `${currentYear}-${currentMonth}-${currentDay}`; // Assign to currentFullDate
+
+        dateInput.setAttribute("min", currentFullDate);
+        dateInput.setAttribute("value", currentFullDate);
       }
+      setCurrentDate();
 
-      if (currentDay < 10) {
-        currentDay = "0" + currentDay;
-      }
-      currentFullDate = `${currentYear}-${currentMonth}-${currentDay}`; // Assign to currentFullDate
-
-      dateInput.setAttribute("min", currentFullDate);
-      dateInput.setAttribute("value", currentFullDate);
+      // Function that handles the loop is called
+      displayToDoList();
     }
-    setCurrentDate();
   }
 });
 
@@ -100,6 +117,8 @@ function appendObject(task) {
   // Define dateInput
   const dateInput = document.querySelector("#date-input");
   dateInput.addEventListener("change", () => {
+    const findID = toDoArray.findIndex((taskToBeFound) => task.id === taskToBeFound.id);
+    console.log(findID);
     task.dueDate = dateInput.value;
     if (task.dueDate === "") {
       dueDateDescription.textContent = "Date not set";
@@ -114,7 +133,7 @@ function appendObject(task) {
 
   deleteButton.addEventListener("click", () => {
     // console.log(task.id);
-    const taskIdToDelete = toDoArray.findIndex((taskToBeDeleted) => task.id === taskToBeDeleted.id);
-    console.log(taskIdToDelete);
+    const findID = toDoArray.findIndex((taskToBeFound) => task.id === taskToBeFound.id);
+    console.log(findID);
   });
 }
