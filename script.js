@@ -7,6 +7,10 @@ if (localStorage.getItem("toDoArray")) {
   displayToDoList(); // Display the tasks from localStorage
 }
 
+function setItem() {
+  localStorage.setItem("toDoArray", JSON.stringify(toDoArray));
+}
+
 // Define the taskInput
 const taskInput = document.querySelector("#task-input");
 
@@ -25,7 +29,7 @@ taskInput.addEventListener("keydown", (e) => {
       setTimeout(() => {
         taskInput.classList.remove("invalid");
         taskInput.setAttribute("placeholder", "New task...");
-      }, 2000);
+      }, 1000);
       return;
       // If input field has content, execute the push of the object
     } else {
@@ -34,7 +38,7 @@ taskInput.addEventListener("keydown", (e) => {
       taskInput.value = "";
 
       // Object for the array is being created
-      const task = {
+      let task = {
         description: inputValue,
         // Generates a id for the object that will always be unique as it counts the number of objects in the array +1
 
@@ -52,7 +56,7 @@ taskInput.addEventListener("keydown", (e) => {
       toDoArray.push(task);
 
       // Saves the content of the array in Local Storage
-      localStorage.setItem("toDoArray", JSON.stringify(toDoArray));
+      setItem();
 
       console.log(toDoArray);
 
@@ -114,18 +118,21 @@ function appendObject(task) {
 
   // Define dateInput
   dateInputField.addEventListener("change", () => {
-    const findID = toDoArray.findIndex((taskToBeFound) => task.id === taskToBeFound.id);
-    console.log(findID);
     task.dueDate = dateInputField.value;
+
+    // dueDateDescription.textContent = `Due date is set to ${task.dueDate}`;
+
     if (task.dueDate === "") {
-      dueDateDescription.textContent = "Date not set";
-      // Hvis due date er defineret, skriv det ud i DOM'en
-    } else {
-      dueDateDescription.textContent = `Due date is set to ${task.dueDate}`;
+      dueDateDescription.textContent = "";
+    } else if (task.dueDate !== "") {
+      dueDateDescription.textContent = `Due date has been assigned to ${task.dueDate}`;
     }
 
+    // dueDateDescription.textContent = task.dueDate;
     console.log(task.dueDate);
     console.log(toDoArray);
+
+    setItem();
   });
 
   deleteButton.addEventListener("click", () => {
@@ -133,4 +140,10 @@ function appendObject(task) {
     const findID = toDoArray.findIndex((taskToBeFound) => task.id === taskToBeFound.id);
     console.log(findID);
   });
+
+  if (task.dueDate === "") {
+    dueDateDescription.textContent = "";
+  } else if (task.dueDate !== "") {
+    dueDateDescription.textContent = `Due date has been assigned to ${task.dueDate}`;
+  }
 }
