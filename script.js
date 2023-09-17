@@ -95,32 +95,32 @@ function appendObject(task) {
   // Appends the clone to the unordered list
   document.querySelector("ul").appendChild(taskClone);
 
-  // Define date input
+  // Set the current date as the starting date for setting a due date
   let currentFullDate = "";
   let currentDate = new Date();
   let currentDay = currentDate.getDate();
   let currentMonth = currentDate.getMonth() + 1;
   let currentYear = currentDate.getFullYear();
 
+  // Adds a 0 before the month if the month is below 10 so it can be read by the input value
   if (currentMonth < 10) {
     currentMonth = "0" + currentMonth;
   }
 
+  // Adds a 0 before the day if the day is below 10
   if (currentDay < 10) {
     currentDay = "0" + currentDay;
   }
-  currentFullDate = `${currentYear}-${currentMonth}-${currentDay}`; // Assign to currentFullDate
 
+  // Enriches the currentFullDate with current date data
+  currentFullDate = `${currentYear}-${currentMonth}-${currentDay}`;
+
+  // Sets the minimum date value and current date value as the currentFullDate
   dateInputField.setAttribute("min", currentFullDate);
   dateInputField.setAttribute("value", currentFullDate);
 
-  // Set the current date as the starting date for setting a due date
-
-  // Define dateInput
   dateInputField.addEventListener("change", () => {
     task.dueDate = dateInputField.value;
-
-    // dueDateDescription.textContent = `Due date is set to ${task.dueDate}`;
 
     if (task.dueDate === "") {
       dueDateDescription.textContent = "";
@@ -128,7 +128,6 @@ function appendObject(task) {
       dueDateDescription.textContent = `Due date has been assigned to ${task.dueDate}`;
     }
 
-    // dueDateDescription.textContent = task.dueDate;
     console.log(task.dueDate);
     console.log(toDoArray);
 
