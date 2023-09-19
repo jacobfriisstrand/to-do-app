@@ -7,6 +7,8 @@ if (localStorage.getItem("toDoArray")) {
   displayToDoList(); // Display the tasks from localStorage
 }
 
+displayStoredItems();
+
 function setItem() {
   localStorage.setItem("toDoArray", JSON.stringify(toDoArray));
 }
@@ -69,9 +71,11 @@ taskInput.addEventListener("keydown", (e) => {
 // Displays the To do list in a ul element
 function displayToDoList() {
   const ul = document.querySelector("ul");
+  const doneList = document.querySelector("#done-list");
 
   // Clears the ul content prior to appending objects to the array
   ul.innerHTML = "";
+  doneList.innerHTML = "";
 
   // Loops each object in the array with forEach
   toDoArray.forEach(appendObject);
@@ -89,11 +93,15 @@ function appendObject(task) {
   const doneButton = taskClone.querySelector("#done-button");
   const importantButton = taskClone.querySelector("#important-button");
 
+  if (task.complete === true) {
+    document.querySelector("#done-list").appendChild(taskClone);
+    setItem();
+  }
   // Sets the text content to be the object description property
   taskDescription.textContent = task.description;
 
   // Appends the clone to the unordered list
-  document.querySelector("ul").appendChild(taskClone);
+  document.querySelector("#to-do-list").appendChild(taskClone);
 
   // Set the current date as the starting date for setting a due date
   let currentFullDate = "";
@@ -141,11 +149,42 @@ function appendObject(task) {
     dateInputField.value = task.dueDate;
   }
 
-  deleteButton.addEventListener("click", (e) => {
-    const findID = toDoArray.findIndex((taskToBeFound) => task.id === taskToBeFound.id);
-    console.log(findID);
-    toDoArray.splice(findID, 1);
+  deleteButton.addEventListener("click", () => {
+    const findIndex = toDoArray.findIndex((taskToBeFound) => task.id === taskToBeFound.id);
+    const currentObject = toDoArray.find((object) => object.id === task.id);
+    console.log(findIndex);
+    console.log(currentObject);
+
+    toDoArray.splice(findIndex, 1);
     displayToDoList();
+    setItem();
+  });
+
+  doneButton.addEventListener("click", (e) => {
+    // Find the index of the object that is clicked
+    const findIndex = toDoArray.findIndex((taskToBeFound) => task.id === taskToBeFound.id);
+    console.log(findIndex);
+
+    // Find the object that is clicked
+    const currentObject = toDoArray.find((object) => object.id === task.id);
+    console.log(currentObject);
+
+    task.complete = !task.complete;
+
+    // Remove the done task from toDoArray using splice
+    // toDoArray.splice(findIndex, 1);
+    // document.querySelector("#done-list").appendChild(taskClone);
+
+    appendObject(currentObject);
+    displayToDoList();
+    setItem();
+  });
+
+  importantButton.addEventListener("click", () => {
+    const findIndex = toDoArray.findIndex((taskToBeFound) => task.id === taskToBeFound.id);
+    console.log(findIndex);
+
+    currentObject.important = !currentObject.important;
     setItem();
   });
 }
