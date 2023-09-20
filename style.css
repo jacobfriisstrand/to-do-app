@@ -1,5 +1,5 @@
 :root {
-  --transition-duration: 100ms ease-in-out;
+  --transition-duration: 200ms ease-in-out;
 }
 
 * {
@@ -7,10 +7,41 @@
   margin: 0;
 }
 
+body {
+  padding-block: 2rem;
+  padding-inline: 1rem;
+  max-width: 700px;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+ul {
+  list-style-type: none;
+}
+
+li {
+  /* width: fit-content; */
+  padding-block: 0.7rem;
+  border-bottom: 1px solid black;
+}
+
+li > * {
+  margin-bottom: 1rem;
+}
+
+.due-date-container > * {
+  margin-bottom: 0.3rem;
+}
+
 input[type="text"] {
   border: 0;
   border-bottom: 2px solid black;
+  grid-column: 1 / -1;
+  padding-block: 1rem;
 }
+
 .task-buttons > * {
   border: none;
   background-color: transparent;
@@ -19,14 +50,18 @@ input[type="text"] {
   padding: none;
 }
 
-.task-buttons > *:hover,
-#date-input:hover {
-  opacity: 0.5;
+#done-button:hover,
+#done-button:focus {
+  fill: green;
   transition: var(--transition-duration);
 }
 
-.delete {
-  display: none;
+.task-buttons > *:hover,
+#date-input:hover,
+.task-buttons > *:focus,
+#date-input:focus {
+  opacity: 0.5;
+  transition: var(--transition-duration);
 }
 
 @keyframes shake {
@@ -51,6 +86,14 @@ input[type="text"] {
 
 .remove {
   animation: remove 1s ease-in-out;
+}
+
+.important {
+  background-color: yellow;
+}
+
+.low-opacity {
+  opacity: 0.5;
 }
 
 @keyframes remove {

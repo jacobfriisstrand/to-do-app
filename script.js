@@ -82,23 +82,41 @@ function displayToDoList() {
 }
 
 function appendObject(task) {
+  //Being able to find the object that is clicked
+  const currentObject = toDoArray.find((object) => object.id === task.id);
+  console.log(currentObject);
+
   // Clones the task description in the DOM
   const taskClone = document.querySelector("#task-object").content.cloneNode(true);
 
   // Defines where the task description will be shown
   let taskDescription = taskClone.querySelector("#task-description");
   let dueDateDescription = taskClone.querySelector("#due-date");
+  const listItem = taskClone.querySelector("li");
   const deleteButton = taskClone.querySelector("#delete-button");
   const dateInputField = taskClone.querySelector("#date-input");
   const doneButton = taskClone.querySelector("#done-button");
   const importantButton = taskClone.querySelector("#important-button");
 
-  if (task.complete === true) {
-    document.querySelector("#done-list").appendChild(taskClone);
-    setItem();
-  }
   // Sets the text content to be the object description property
   taskDescription.textContent = task.description;
+
+  listItem.setAttribute("data-task-id", task.id);
+
+  if (task.className === "important") {
+    listItem.classList.add("important");
+  }
+
+  // If the object is done, append to the done list
+  if (task.complete === true) {
+    document.querySelector(".done-container").style.display = "block";
+    document.querySelector("#done-list").appendChild(taskClone);
+    listItem.classList.add("low-opacity");
+    listItem.classList.remove("important");
+    importantButton.style.display = "none";
+  } else {
+    document.querySelector(".done-container").style.display = "none";
+  }
 
   // Appends the clone to the unordered list
   document.querySelector("#to-do-list").appendChild(taskClone);
@@ -138,6 +156,8 @@ function appendObject(task) {
 
     console.log(task.dueDate);
     console.log(toDoArray);
+    toDoArray.sort(compareTasks);
+    displayToDoList();
 
     setItem();
   });
@@ -171,10 +191,6 @@ function appendObject(task) {
 
     task.complete = !task.complete;
 
-    // Remove the done task from toDoArray using splice
-    // toDoArray.splice(findIndex, 1);
-    // document.querySelector("#done-list").appendChild(taskClone);
-
     appendObject(currentObject);
     displayToDoList();
     setItem();
@@ -185,6 +201,33 @@ function appendObject(task) {
     console.log(findIndex);
 
     currentObject.important = !currentObject.important;
+    const currentTask = document.querySelector(`li[data-task-id="${findIndex}"]`);
+
+    if (currentObject.important === true) {
+      task.className = "important";
+    } else {
+      task.className = "";
+    }
+    toDoArray.sort(compareTasks);
     setItem();
+    displayToDoList();
   });
+
+  function compareTasks(a, b) {
+    if (a.important && !b.important) {
+      return -1; // Move tasks with isImportant = true to the top
+    } else if (!a.important && b.important) {
+      return 1; // Move tasks with isImportant = false to the bottom
+    } else if (a.dueDate === "" && b.dueDate === "") {
+      return 0; // If both have no dueDate, leave their order unchanged
+    } else if (a.dueDate === "") {
+      return 1; // Move tasks with no dueDate to the bottom
+    } else if (b.dueDate === "") {
+      return -1; // Move tasks with no dueDate to the bottom
+    } else if (a.dueDate < b.dueDate) {
+      return -1; // Sort by dueDate if both have dueDates defined
+    } else {
+      return 1;
+    }
+  }
 }

@@ -11,17 +11,23 @@
   </head>
   <body>
     <input type="text" name="" id="task-input" placeholder="New task..." />
-    <h3>To do</h3>
-    <ul id="to-do-list"></ul>
-    <h3>Done</h3>
-    <ul id="done-list"></ul>
+    <div class="to-do-container">
+      <h3>To do</h3>
+      <ul id="to-do-list"></ul>
+    </div>
+    <div class="done-container">
+      <h3>Done</h3>
+      <ul id="done-list"></ul>
+    </div>
 
     <template id="task-object">
       <li data-task-id="">
         <p id="task-description">Description</p>
-        <p>Set due date</p>
-        <input type="date" id="date-input" name="" min="" value="" />
-        <p id="due-date"></p>
+        <div class="due-date-container">
+          <p>Set due date</p>
+          <input type="date" id="date-input" name="" min="" value="" />
+          <p id="due-date"></p>
+        </div>
         <div class="task-buttons">
           <button id="done-button" data-id="" aria-label="mark-done">
             <svg fill="" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
