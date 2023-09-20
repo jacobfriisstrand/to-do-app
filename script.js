@@ -16,57 +16,68 @@ function setItem() {
 // Define the taskInput
 const taskInput = document.querySelector("#task-input");
 
+//
+
 // Event listener that creates an object when enter key is pressed after entering a task in taskInput field
+
+document.querySelector(".input-button").addEventListener("click", addTask);
+
+// Add a keydown event listener to the taskInput element
 taskInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    // Defines the inputValue as the value of the text input field
-    const inputValue = taskInput.value;
-
-    // Adding functionality to make input field shake if no content is applied
-    if (inputValue === "") {
-      taskInput.classList.add("invalid");
-      taskInput.setAttribute("placeholder", "Invalid input");
-
-      // Changes the inputfield to normal after 2000ms
-      setTimeout(() => {
-        taskInput.classList.remove("invalid");
-        taskInput.setAttribute("placeholder", "New task...");
-      }, 1000);
-      return;
-      // If input field has content, execute the push of the object
-    } else {
-      taskInput.classList.remove("invalid");
-      // Clears the input value after the inputValue is stored as a variable
-      taskInput.value = "";
-
-      // Object for the array is being created
-      let task = {
-        description: inputValue,
-        // Generates a id for the object that will always be unique as it counts the number of objects in the array +1
-
-        id: toDoArray.length + 1,
-
-        // Due date is set empty, so that it can be enriched later
-        dueDate: "",
-
-        // Boolean values to define if the object is important or completed
-        complete: false,
-        important: false,
-      };
-
-      // Object is pushed to the array
-      toDoArray.push(task);
-
-      // Saves the content of the array in Local Storage
-      setItem();
-
-      console.log(toDoArray);
-
-      // Function that handles the loop is called
-      displayToDoList();
-    }
+    addTask();
   }
 });
+
+function addTask() {
+  // Defines the inputValue as the value of the text input field
+  const inputValue = taskInput.value;
+
+  // Adding functionality to make input field shake if no content is applied
+  if (inputValue === "") {
+    taskInput.classList.add("invalid");
+    taskInput.setAttribute("placeholder", "Invalid input");
+
+    // Changes the inputfield to normal after 2000ms
+    setTimeout(() => {
+      taskInput.classList.remove("invalid");
+      taskInput.setAttribute("placeholder", "New task...");
+    }, 1000);
+    return;
+    // If input field has content, execute the push of the object
+  } else {
+    taskInput.classList.remove("invalid");
+    // Clears the input value after the inputValue is stored as a variable
+    taskInput.value = "";
+
+    // Object for the array is being created
+    let task = {
+      description: inputValue,
+      // Generates a id for the object that will always be unique as it counts the number of objects in the array +1
+
+      id: toDoArray.length + 1,
+
+      // Due date is set empty, so that it can be enriched later
+      dueDate: "",
+
+      // Boolean values to define if the object is important or completed
+      complete: false,
+      important: false,
+      deleted: false,
+    };
+
+    // Object is pushed to the array
+    toDoArray.push(task);
+
+    // Saves the content of the array in Local Storage
+    setItem();
+
+    console.log(toDoArray);
+
+    // Function that handles the loop is called
+    displayToDoList();
+  }
+}
 
 // Displays the To do list in a ul element
 function displayToDoList() {
@@ -97,25 +108,38 @@ function appendObject(task) {
   const dateInputField = taskClone.querySelector("#date-input");
   const doneButton = taskClone.querySelector("#done-button");
   const importantButton = taskClone.querySelector("#important-button");
+  const importantMarker = taskClone.querySelector("#important-marker");
 
   // Sets the text content to be the object description property
   taskDescription.textContent = task.description;
 
-  listItem.setAttribute("data-task-id", task.id);
+  if (task.important === true) {
+    importantMarker.style.display = "flex";
+  } else {
+    importantMarker.style.display = "none";
+  }
 
   if (task.className === "important") {
     listItem.classList.add("important");
+
+    importantButton.addEventListener("mouseenter", function () {
+      importantButton.style.fill = "var(--dark-clr)";
+    });
+
+    // Reset the hover color when the mouse leaves the button
+    importantButton.addEventListener("mouseleave", function () {
+      importantButton.style.fill = ""; // Reset to default
+    });
   }
 
   // If the object is done, append to the done list
   if (task.complete === true) {
-    document.querySelector(".done-container").style.display = "block";
     document.querySelector("#done-list").appendChild(taskClone);
     listItem.classList.add("low-opacity");
     listItem.classList.remove("important");
     importantButton.style.display = "none";
+    doneButton.style.fill = "green";
   } else {
-    document.querySelector(".done-container").style.display = "none";
   }
 
   // Appends the clone to the unordered list
@@ -165,22 +189,42 @@ function appendObject(task) {
   if (task.dueDate === "") {
     dueDateDescription.textContent = "";
   } else if (task.dueDate !== "") {
-    dueDateDescription.textContent = `Due date has been assigned to ${task.dueDate}`;
+    dueDateDescription.textContent = `Due date is ${task.dueDate}`;
     dateInputField.value = task.dueDate;
   }
 
-  deleteButton.addEventListener("click", () => {
+  deleteButton.addEventListener("click", async () => {
     const findIndex = toDoArray.findIndex((taskToBeFound) => task.id === taskToBeFound.id);
     const currentObject = toDoArray.find((object) => object.id === task.id);
     console.log(findIndex);
     console.log(currentObject);
+    currentObject.deleted = true;
 
-    toDoArray.splice(findIndex, 1);
-    displayToDoList();
-    setItem();
+    if (currentObject.deleted === true) {
+      task.className = "deleted";
+    } else {
+      task.className = "";
+    }
+
+    // Start the animation with a delay
+    await animateDeletedTask(currentObject); // Replace with the name of your animation function
+
+    function animateDeletedTask() {
+      if (task.className === "deleted") {
+        listItem.classList.add("deleted");
+      }
+    }
+    animateDeletedTask();
+
+    // Delay before continuing with other code
+    setTimeout(() => {
+      toDoArray.splice(findIndex, 1);
+      displayToDoList();
+      setItem();
+    }, 500); // Adjust the delay time (in milliseconds) as needed
   });
 
-  doneButton.addEventListener("click", (e) => {
+  doneButton.addEventListener("click", async (e) => {
     // Find the index of the object that is clicked
     const findIndex = toDoArray.findIndex((taskToBeFound) => task.id === taskToBeFound.id);
     console.log(findIndex);
@@ -191,9 +235,28 @@ function appendObject(task) {
 
     task.complete = !task.complete;
 
-    appendObject(currentObject);
-    displayToDoList();
-    setItem();
+    if (currentObject.complete === true) {
+      task.className = "done";
+    } else {
+      task.className = "";
+    }
+
+    // Start the animation with a delay
+    await animateDoneTask(currentObject); // Replace with the name of your animation function
+
+    function animateDoneTask() {
+      if (task.className === "done") {
+        listItem.classList.add("done");
+      }
+    }
+    animateDoneTask();
+
+    // Delay before continuing with other code
+    setTimeout(() => {
+      appendObject(currentObject);
+      displayToDoList();
+      setItem();
+    }, 500); // Adjust the delay time (in milliseconds) as needed
   });
 
   importantButton.addEventListener("click", () => {
@@ -201,33 +264,46 @@ function appendObject(task) {
     console.log(findIndex);
 
     currentObject.important = !currentObject.important;
-    const currentTask = document.querySelector(`li[data-task-id="${findIndex}"]`);
 
     if (currentObject.important === true) {
+      // Append the clone to the taskClone element
       task.className = "important";
     } else {
       task.className = "";
     }
+
     toDoArray.sort(compareTasks);
-    setItem();
     displayToDoList();
+    setItem();
   });
 
   function compareTasks(a, b) {
     if (a.important && !b.important) {
-      return -1; // Move tasks with isImportant = true to the top
+      return -1; // Move tasks with important = true to the top
     } else if (!a.important && b.important) {
-      return 1; // Move tasks with isImportant = false to the bottom
-    } else if (a.dueDate === "" && b.dueDate === "") {
-      return 0; // If both have no dueDate, leave their order unchanged
-    } else if (a.dueDate === "") {
-      return 1; // Move tasks with no dueDate to the bottom
-    } else if (b.dueDate === "") {
-      return -1; // Move tasks with no dueDate to the bottom
-    } else if (a.dueDate < b.dueDate) {
-      return -1; // Sort by dueDate if both have dueDates defined
+      return 1; // Move tasks with important = false to the bottom
     } else {
-      return 1;
+      // When both tasks have the same important status or both are unimportant,
+      // consider their dueDate (if available)
+      if (a.dueDate === "" && b.dueDate !== "") {
+        return 1; // Move tasks with no dueDate to the bottom
+      } else if (a.dueDate !== "" && b.dueDate === "") {
+        return -1; // Move tasks with no dueDate to the bottom
+      } else if (a.dueDate !== "" && b.dueDate !== "") {
+        // Compare dueDate values as dates (assuming YYYY-MM-DD format)
+        const dateA = new Date(a.dueDate);
+        const dateB = new Date(b.dueDate);
+
+        if (dateA < dateB) {
+          return -1; // Sort by dueDate if both have dueDates defined and dateA is earlier
+        } else if (dateA > dateB) {
+          return 1; // Sort by dueDate if both have dueDates defined and dateA is later
+        }
+      }
+
+      // When both tasks have the same important status and no dueDate or have equal dueDates,
+      // consider their original order in the array
+      return a.id - b.id;
     }
   }
 }

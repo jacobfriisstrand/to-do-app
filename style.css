@@ -1,20 +1,86 @@
 :root {
   --transition-duration: 200ms ease-in-out;
+  --xsmall-spacing: 0.5rem;
+  --small-spacing: 1rem;
+  --dark-clr: rgb(22, 22, 22);
+  --grey: #e5edfe;
+  --white: #ffffff;
+  --accent: #ffb700;
+  --important: #ffd30a;
+  --box-shadow: 2px 4px 12px rgb(0 0 0 / 8%);
+  --outer-border-radius: 5px;
+  --inner-border-radius: calc((var(--outer-border-radius) / 2));
 }
 
 * {
   padding: 0;
   margin: 0;
+  font-family: "general sans regular";
+}
+
+@font-face {
+  font-family: "general sans regular";
+  src: url(GeneralSans-Regular.woff2);
+}
+
+@font-face {
+  font-family: "general sans bold";
+  src: url(GeneralSans-Semibold.woff2);
 }
 
 body {
-  padding-block: 2rem;
-  padding-inline: 1rem;
-  max-width: 700px;
-  margin-inline: auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1rem;
+  color: var(--dark-clr);
+  min-height: 100dvh;
+  font-family: "general sans";
+}
+
+@media (width > 1000px) {
+  body {
+    display: grid;
+    grid-template-columns: 300px 1fr 300px;
+    grid-template-rows: 1fr;
+  }
+}
+
+h3 {
+  color: var(--accent);
+  font-size: 2rem;
+  font-family: "general sans bold";
+}
+
+aside {
+  background-color: var(--grey);
+  padding: var(--small-spacing);
+}
+
+.aside-container {
+  display: flex;
+  height: fit-content;
+  align-items: center;
+  gap: var(--small-spacing);
+  position: sticky;
+  top: var(--small-spacing);
+}
+
+button {
+  border: 0;
+  background-color: transparent;
+}
+
+.input-button {
+  transition: var(--transition-duration);
+}
+
+.input-button .input-button:hover,
+.input-button:hover {
+  cursor: pointer;
+  fill: green;
+  transition: var(--transition-duration);
+}
+
+.to-do-container,
+.done-container {
+  padding: var(--small-spacing);
 }
 
 ul {
@@ -22,24 +88,54 @@ ul {
 }
 
 li {
-  /* width: fit-content; */
-  padding-block: 0.7rem;
-  border-bottom: 1px solid black;
+  margin-block: var(--small-spacing);
+  background-color: var(--grey);
+  padding: var(--small-spacing);
+  border-radius: var(--outer-border-radius);
+  box-shadow: var(--box-shadow);
+  display: flex;
+  justify-content: space-between;
 }
 
-li > * {
-  margin-bottom: 1rem;
+.main-task-container > *:not(:last-child) {
+  margin-bottom: var(--small-spacing);
 }
 
-.due-date-container > * {
-  margin-bottom: 0.3rem;
+#important-marker {
+  display: flex;
+  height: fit-content;
+  align-items: center;
 }
 
 input[type="text"] {
   border: 0;
-  border-bottom: 2px solid black;
-  grid-column: 1 / -1;
-  padding-block: 1rem;
+  padding-block: var(--xsmall-spacing);
+  padding-left: 0.3rem;
+  border-bottom: 2px solid var(--dark-clr);
+  width: 100%;
+  font-size: 1.25rem;
+  background: none;
+  color: var(--dark-clr);
+  font-family: "general sans bold";
+}
+
+input[type="date"] {
+  background-color: transparent;
+  border: 1px solid black;
+  padding: 0.3rem;
+}
+
+#task-description {
+  font-size: 1.3rem;
+  font-family: "general sans bold";
+}
+
+.due-date-container > * {
+  margin-bottom: var(--xsmall-spacing);
+}
+
+input[type="text"]::placeholder {
+  color: var(--dark-clr);
 }
 
 .task-buttons > * {
@@ -56,11 +152,23 @@ input[type="text"] {
   transition: var(--transition-duration);
 }
 
+#delete-button:hover,
+#delete-button:focus {
+  fill: red;
+  transition: var(--transition-duration);
+}
+
+#important-button:hover,
+#important-button:focus {
+  fill: var(--important);
+  transition: var(--transition-duration);
+}
+
 .task-buttons > *:hover,
 #date-input:hover,
 .task-buttons > *:focus,
 #date-input:focus {
-  opacity: 0.5;
+  opacity: 0.8;
   transition: var(--transition-duration);
 }
 
@@ -79,24 +187,36 @@ input[type="text"] {
   }
 }
 
+.done-mark {
+  fill: green;
+}
+
 .invalid {
   animation: shake 0.2s ease-in-out 0s 2;
   border-bottom: 2px solid red;
 }
 
-.remove {
-  animation: remove 1s ease-in-out;
+.done {
+  animation: done 500ms ease-in-out;
+}
+
+.deleted {
+  animation: deleted 500ms ease-in-out;
+}
+
+.created {
+  animation: created 500ms ease-in-out;
 }
 
 .important {
-  background-color: yellow;
+  background-color: var(--important);
 }
 
 .low-opacity {
   opacity: 0.5;
 }
 
-@keyframes remove {
+@keyframes done {
   0% {
     opacity: 1;
     transform: translateY(0px);
@@ -104,5 +224,29 @@ input[type="text"] {
   100% {
     opacity: 0;
     transform: translateY(-10px);
+    background-color: green;
+  }
+}
+
+@keyframes deleted {
+  0% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(10px);
+    background-color: red;
+  }
+}
+
+@keyframes created {
+  0% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(10px);
   }
 }
