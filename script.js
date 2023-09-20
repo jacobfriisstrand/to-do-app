@@ -16,10 +16,7 @@ function setItem() {
 // Define the taskInput
 const taskInput = document.querySelector("#task-input");
 
-//
-
-// Event listener that creates an object when enter key is pressed after entering a task in taskInput field
-
+// Event listener that creates an object when enter key is pressed or input button is clicked
 document.querySelector(".input-button").addEventListener("click", addTask);
 
 // Add a keydown event listener to the taskInput element
@@ -113,15 +110,18 @@ function appendObject(task) {
   // Sets the text content to be the object description property
   taskDescription.textContent = task.description;
 
+  // Displays important marker if the task is marked important
   if (task.important === true) {
     importantMarker.style.display = "flex";
   } else {
     importantMarker.style.display = "none";
   }
 
+  // Adds yellow background to important tasks
   if (task.className === "important") {
     listItem.classList.add("important");
 
+    // Handles problem with color clash when important icon is hovered
     importantButton.addEventListener("mouseenter", function () {
       importantButton.style.fill = "var(--dark-clr)";
     });
@@ -169,6 +169,7 @@ function appendObject(task) {
   dateInputField.setAttribute("min", currentFullDate);
   dateInputField.setAttribute("value", currentFullDate);
 
+  // Due date is set via input, and is displayed in the list again and also saved in localStorage
   dateInputField.addEventListener("change", () => {
     task.dueDate = dateInputField.value;
 
@@ -186,13 +187,16 @@ function appendObject(task) {
     setItem();
   });
 
+  // If the dueDate has not been set, the field is empty
   if (task.dueDate === "") {
     dueDateDescription.textContent = "";
   } else if (task.dueDate !== "") {
+    // If it has been set, following is shown in the DOM
     dueDateDescription.textContent = `Due date is ${task.dueDate}`;
     dateInputField.value = task.dueDate;
   }
 
+  // Detects the object that is clicked and uses slice to remove it from the array
   deleteButton.addEventListener("click", async () => {
     const findIndex = toDoArray.findIndex((taskToBeFound) => task.id === taskToBeFound.id);
     const currentObject = toDoArray.find((object) => object.id === task.id);
@@ -206,8 +210,8 @@ function appendObject(task) {
       task.className = "";
     }
 
-    // Start the animation with a delay
-    await animateDeletedTask(currentObject); // Replace with the name of your animation function
+    // Start animation with a delay
+    await animateDeletedTask(currentObject);
 
     function animateDeletedTask() {
       if (task.className === "deleted") {
@@ -221,7 +225,7 @@ function appendObject(task) {
       toDoArray.splice(findIndex, 1);
       displayToDoList();
       setItem();
-    }, 500); // Adjust the delay time (in milliseconds) as needed
+    }, 500);
   });
 
   doneButton.addEventListener("click", async (e) => {
@@ -242,7 +246,7 @@ function appendObject(task) {
     }
 
     // Start the animation with a delay
-    await animateDoneTask(currentObject); // Replace with the name of your animation function
+    await animateDoneTask(currentObject);
 
     function animateDoneTask() {
       if (task.className === "done") {
@@ -256,7 +260,7 @@ function appendObject(task) {
       appendObject(currentObject);
       displayToDoList();
       setItem();
-    }, 500); // Adjust the delay time (in milliseconds) as needed
+    }, 500);
   });
 
   importantButton.addEventListener("click", () => {
